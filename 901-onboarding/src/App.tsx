@@ -1,5 +1,12 @@
 import TeamList from './TeamList'
+import { getTeamStatus } from './getTeamStatus'
+import type { TeamStatus } from './getTeamStatus'
 import type { Team } from './types'
+
+getTeamStatus('1').then((result: TeamStatus) => console.log('Team 1:', result))
+getTeamStatus('999').then((result: TeamStatus) =>
+  console.log('Team 999:', result),
+)
 
 function App() {
   const teams: Team[] = [
