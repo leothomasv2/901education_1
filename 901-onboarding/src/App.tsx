@@ -1,14 +1,11 @@
+import { useState } from 'react'
 import TeamList from './TeamList'
 import { getTeamStatus } from './getTeamStatus'
-import type { TeamStatus } from './getTeamStatus'
 import type { Team } from './types'
 
-getTeamStatus('1').then((result: TeamStatus) => console.log('Team 1:', result))
-getTeamStatus('999').then((result: TeamStatus) =>
-  console.log('Team 999:', result),
-)
-
 function App() {
+  const [teamStatusAttr, setTeamStatusAttr] = useState<string | null>(null)
+
   const teams: Team[] = [
     {
       id: '1',
@@ -37,7 +34,28 @@ function App() {
     },
   ]
 
-  return <TeamList teams={teams} />
+  function dispatch(eventName: string, detail?: unknown) {
+    if (
+      eventName === 'requestTeamStatus' &&
+      typeof detail === 'object' &&
+      detail !== null &&
+      'teamId' in detail &&
+      typeof detail.teamId === 'string'
+    ) {
+      setTeamStatusAttr(null)
+      getTeamStatus(detail.teamId).then((result) => {
+        setTeamStatusAttr(JSON.stringify(result))
+      })
+    }
+  }
+
+  return (
+    <TeamList
+      teams={teams}
+      attributes={{ 'team-status': teamStatusAttr }}
+      dispatch={dispatch}
+    />
+  )
 }
 
 export default App
